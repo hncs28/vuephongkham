@@ -1,101 +1,98 @@
 <template>
-    <div class="menu" style="margin-top: 30px">
-        <HeaderMenu/>
-    </div>
-    <div class="image2">
+    <div>
+      <div class="menu" style="margin-top: 30px">
+        <HeaderMenu :loggedIn="loggedIn" :customerUsername="loggedInUsername"/>
+      </div>
+      <div class="image2">
         <img src="@/assets/image.jpg">
         <div class="text">ĐĂNG NHẬP</div>
-    </div>
-    <div class="login">
+      </div>
+      <div class="login">
         <div class="login-container">
-            <h2 style="color: #54595f;">Trang Đăng Nhập</h2>
-            <form @submit.prevent="ClientLogin">
-                <div class="form-login-group">
-                    <label for="username">Tên đăng nhập</label>
-                    <input type="text" id="username" placeholder="Tên đăng nhập" required>
-                </div>
-                <div class="form-login-group">
-                    <label for="password">Mật khẩu</label>
-                    <input type="password" id="password" placeholder="Mật khẩu" required>
-                </div>
-                <button type="submit">Đăng Nhập</button>
-                <p>Chưa có tài khoản? <router-link to="/register" style="font-weight: bold; color: red;">Đăng ký</router-link></p>
-            </form>
+          <h2 style="color: #54595f;">Trang Đăng Nhập</h2>
+          <form @submit.prevent="login">
+            <div class="form-login-group">
+              <label for="customerUsername">Tên đăng nhập</label>
+              <input type="text" v-model="customerUsername" id="customerUsername" placeholder="Tên đăng nhập" required>
+            </div>
+            <div class="form-login-group">
+              <label for="customerPassword">Mật khẩu</label>
+              <input type="password" v-model="customerPassword" id="customerPassword" placeholder="Mật khẩu" required>
+            </div>
+            <button type="submit">Đăng Nhập</button>
+            <p>Chưa có tài khoản? <router-link to="/register" style="font-weight: bold; color: red;">Đăng ký</router-link></p>
+          </form>
+          <p v-if="loggedIn">Hello, {{ loggedInUsername }}</p>
         </div>
+      </div>
+      <div class="footer-container">
+        <!-- Footer content here -->
+      </div>
     </div>
+  </template>
+  
+  <script>
+  import HeaderMenu from './HeaderMenu.vue';
+  import axios from 'axios';
+  import { useRouter } from 'vue-router';
 
-    <div class="footer-container">
-        <div class="footer-left">
-            <div class="footer-logo">
-                <a href="http://localhost:8081/">
-                    <img src="@/assets/logo.png" />
-                </a>
-            </div>
-            <div class="footer-item">
-                <a href="https://www.facebook.com/pkmatNgoiSao">
-                    <img src="@/assets/facebook.png" />
-                </a>
-                <a href="https://www.youtube.com/@PhongkhamMatNgoiSao">
-                    <img src="@/assets/youtube.png" />
-                </a>
-                <a href="https://zalo.me/1118479193975234403">
-                    <img src="@/assets/zalo.png" />
-                </a>
-            </div>
-        </div>
-        <div class="footer-right">
-            <p style="font-size: 22px; color: #54595f; font-weight: bold">
-                Thông Tin Liên Hệ
-            </p>
-            <p style="font-weight: bold; color: #61ce70">_____</p>
-            <br />
-            <div class="diachi" style="display: flex">
-                <img src="@/assets/dia_chi.png" style="margin-right: 20px" />
-                <p>
-                    Số nhà 22 liền kề 6A C17 bộ công an, làng Việt Kiều Châu Âu, Mộ Lao,
-                    Hà Đông, Hà Nội
-                </p>
-            </div>
-            <br />
-            <div class="phone" style="display: flex">
-                <img src="@/assets/phone.png" style="margin-right: 20px" />
-                <p>098 7654 321</p>
-            </div>
-            <br />
-            <div class="www" style="display: flex">
-                <img src="@/assets/www.png" style="margin-right: 20px" />
-                <p>http://localhost:8081/</p>
-            </div>
-            <br />
-            <div class="time" style="display: flex">
-                <img src="@/assets/time.png" style="margin-right: 20px" />
-                <p>Time: 8.00 - 19.00h hàng ngày (Kể cả thứ 7 và Chủ nhật)</p>
-            </div>
-        </div>
-    </div>
-</template>
-
-<script>
-import HeaderMenu from './HeaderMenu.vue';
-
-export default {
-    components:{
-        HeaderMenu,
+  
+  export default {
+    components: {
+      HeaderMenu,
     },
     data() {
-        return {
-            username: '',
-            password: '',
-        }
+      return {
+        customerUsername: '',
+        customerPassword: '',
+        loggedIn: false,
+        loggedInUsername: ''
+      };
+    },
+    setup() {
+      const router = useRouter();
+      return { router };
     },
     methods: {
-        ClientLogin() {
-            console.log(this.username, this.password);
+      async login() {
+        try {
+          const response = await axios.post('http://127.0.0.1:8000/api/login', {
+            customerUsername: this.customerUsername,
+            customerPassword: this.customerPassword
+          });
+  
+          
+          console.log('Response:', response);
+  
+          if (response.data.message === 'Login successful') {
+            this.loggedIn = true;
+            this.loggedInUsername = response.data.customerUsername;
+            this.$router.push({ name: 'HomePage', params:{loggedIn:this.loggedIn, loggedInUsername:this.loggedInUsername} }); 
+          } else {
+            alert(response.data.message);
+          }
+        } catch (error) {
+          // Log the entire error object to see what went wrong
+          console.error('Error:', error);
+  
+          if (error.response) {
+            console.error('Error response:', error.response);
+            if (error.response.data) {
+              console.error('Error response data:', error.response.data);
+              if (error.response.data.message) {
+                alert(error.response.data.message);
+                return;
+              }
+            }
+          }
+  
+          alert('An unknown error occurred.');
         }
+      }
     }
-};
-</script>
-
+  };
+  </script>
+  
 
 <style>
 .image2 {

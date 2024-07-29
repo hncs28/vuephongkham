@@ -9,21 +9,38 @@ import BookingForm from '../components/BookingForm.vue';
 import RegisterForm from '../components/RegisterForm.vue';
 import InfoDoctor from '../components/InfoDoctor.vue'
 import InfoService from '../components/InfoService.vue';
+import HeaderMenu from '@/components/HeaderMenu.vue';
 
 const routes =[
-  {path: '/', component: HomePage},
+  {path: '/', component: HomePage, name:'HomePage',props: true},
   //{path: '/homepage2', component: Home2},
-  {path: '/doctorteam', component: DoctorTeam},
-  {path: '/myservice', component: MyService},
-  {path: '/login', component: LogIn},
+  {
+    path: '/infodoctor/:employeeID',
+    name: 'InfoDoctor',
+    component: InfoDoctor,
+    props: true
+  },
+  {
+    path: '/doctorteam',
+    name: 'DoctorTeam',
+    component: DoctorTeam
+  },
+  {
+    path: '/myservice', 
+    name: 'MyService',
+    component: MyService},
+  {path: '/login', component: LogIn, name:'login'},
   {path: '/booking', component: BookingForm},
   {path: '/register', component: RegisterForm},
-  {path: '/infodoctor', component: InfoDoctor},
-  {path: '/infoservice', component: InfoService},
+  {path: '/infoservice/:serviceID', 
+    name:'InfoService',
+    props: true,
+    component: InfoService},
+    {path:'/menu',component: HeaderMenu, name:'Menu', props:true},
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(process.env.BASE_URL),
   routes
 })
 

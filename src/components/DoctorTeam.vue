@@ -10,9 +10,9 @@
 
     <div class="doctor-list">
         <div v-for="employee in employees" :key="employee.employeeID" class="doctor-item">
-            <img :src="employee.employeeImage" alt="Employee Image" />
+            <img :src=employee.employeeImage alt="Employee Image" style="height: 300px; width: 250px;" >
             <p>{{ employee.employeeRole }}</p>
-            <h3>{{ employee.employeeName }} </h3>
+            <router-link :to="getEmployeeLink(employee.employeeID)"><h3>{{ employee.employeeName }}</h3></router-link>
         </div>
     </div>
 
@@ -74,18 +74,22 @@ export default {
     };
   },
   created() {
-    console.log('222')
     this.fetchEmployees();
   },
   methods: {
     async fetchEmployees() {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/employees');
+        const response = await axios.get('http://127.0.0.1:8000/api/employees');
         this.employees = response.data;
       } catch (error) {
         console.error('Error fetching employees:', error);
       }
+    },
+    getEmployeeLink(employeeID) {
+        console.log(employeeID)
+      return `/infodoctor/${employeeID}`;
     }
+
   }
 };
 

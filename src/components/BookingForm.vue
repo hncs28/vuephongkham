@@ -1,100 +1,162 @@
 <template>
     <div class="menu" style="margin-top: 30px">
-        <HeaderMenu/>
+      <HeaderMenu />
     </div>
     <div class="image2">
-        <img src="@/assets/image.jpg">
-        <div class="text">ĐẶT LỊCH</div>
+      <img src="@/assets/image.jpg">
+      <div class="text">ĐẶT LỊCH</div>
     </div>
     <div class="booking">
-        <div class="booking-container">
-            <h2 style="color: #54595f;">Thông tin</h2>
-            <form>
-                <div class="form-booking-group">
-                    <label for="fullname">Họ tên</label>
-                    <input type="text" id="fullname" placeholder="Họ tên" required>
-                </div>
-                <div class="form-booking-group">
-                    <label for="sdt/email">SĐT/Email</label>
-                    <input type="text" id="sdt/email" placeholder="SĐT/Email" required>
-                </div>
-                <div class="form-booking-group">
-                    <label for="appointment-date">Chọn lịch</label>
-                    <input type="date" id="appointment-date" required style="margin-right: 90px; color: #999;">
-                    <input type="time" id="appointment-time" required style="color: #999;">
-                </div>
-                <div class="form-booking-group">
-                    <label for="doctor">Chọn bác sĩ</label>
-                    <select id="doctor" required>
-                        <option value="" disabled selected>Chọn bác sĩ khám</option>
-                        <option value="dr-a">Phạm Khắc Hoài Nam</option>
-                        <option value="dr-b">Nguyễn Trường Xuân</option>
-                        <option value="dr-c">Bác sĩ ABC</option>
-                    </select>
-                </div>
-                <button type="submit">Đặt lịch</button>
-            </form>
-        </div>
+      <div class="booking-container">
+        <h2 style="color: #54595f;">Thông tin</h2>
+        <form @submit.prevent="submitBooking">
+          <div class="form-booking-group">
+            <label for="customerName">Họ tên</label>
+            <input type="text" id="customerName" v-model="customerName" placeholder="Họ tên" required>
+          </div>
+          <div class="form-booking-group">
+            <label for="customerPhone">SĐT</label>
+            <input type="text" id="customerPhone" v-model="customerPhone" placeholder="SĐT" required>
+          </div>
+          <div class="form-booking-group">
+            <label for="customerEmail">Email</label>
+            <input type="text" id="customerEmail" v-model="customerEmail" placeholder="email" required>
+          </div>
+          <div class="form-booking-group">
+            <label for="appointment-date">Chọn lịch</label>
+            <input type="datetime-local" id="bookingTime" v-model="bookingTime" required style="margin-right: 90px; color: #999;">
+            <!-- <input type="time" id="appointment-time" v-model="appointmentTime" required style="color: #999;"> -->
+          </div>
+          <div class="form-booking-group">
+            <label for="employeeName">Chọn bác sĩ</label>
+            <select id="employeeName" v-model="employeeName" required>
+              <option value="" disabled selected>Chọn bác sĩ khám</option>
+              <option v-for="employee in employees" :key="employee.employeeID" :value="employee.employeeName">{{ employee.employeeName }}</option>
+            </select>
+          </div>
+          <div class="form-booking-group">
+            <label for="services">Chọn dịch vụ</label>
+            <select id="services" v-model="serviceName" required>
+              <option value="" disabled selected>Chọn dich vu khám</option>
+              <option v-for="service in services" :key="service.serviceID" :value="service.serviceName">{{ service.serviceName }}</option>
+            </select>
+          </div>
+          <button type="submit">Đặt lịch</button>
+        </form>
+      </div>
     </div>
-
     <div class="footer-container">
-        <div class="footer-left">
-            <div class="footer-logo">
-                <a href="http://localhost:8081/">
-                    <img src="@/assets/logo.png" />
-                </a>
-            </div>
-            <div class="footer-item">
-                <a href="https://www.facebook.com/pkmatNgoiSao">
-                    <img src="@/assets/facebook.png" />
-                </a>
-                <a href="https://www.youtube.com/@PhongkhamMatNgoiSao">
-                    <img src="@/assets/youtube.png" />
-                </a>
-                <a href="https://zalo.me/1118479193975234403">
-                    <img src="@/assets/zalo.png" />
-                </a>
-            </div>
+      <div class="footer-left">
+        <div class="footer-logo">
+          <a href="http://localhost:8081/">
+            <img src="@/assets/logo.png" />
+          </a>
         </div>
-        <div class="footer-right">
-            <p style="font-size: 22px; color: #54595f; font-weight: bold">
-                Thông Tin Liên Hệ
-            </p>
-            <p style="font-weight: bold; color: #61ce70">_____</p>
-            <br />
-            <div class="diachi" style="display: flex">
-                <img src="@/assets/dia_chi.png" style="margin-right: 20px" />
-                <p>
-                    Số nhà 22 liền kề 6A C17 bộ công an, làng Việt Kiều Châu Âu, Mộ Lao,
-                    Hà Đông, Hà Nội
-                </p>
-            </div>
-            <br />
-            <div class="phone" style="display: flex">
-                <img src="@/assets/phone.png" style="margin-right: 20px" />
-                <p>098 7654 321</p>
-            </div>
-            <br />
-            <div class="www" style="display: flex">
-                <img src="@/assets/www.png" style="margin-right: 20px" />
-                <p>http://localhost:8081/</p>
-            </div>
-            <br />
-            <div class="time" style="display: flex">
-                <img src="@/assets/time.png" style="margin-right: 20px" />
-                <p>Time: 8.00 - 19.00h hàng ngày (Kể cả thứ 7 và Chủ nhật)</p>
-            </div>
+        <div class="footer-item">
+          <a href="https://www.facebook.com/pkmatNgoiSao">
+            <img src="@/assets/facebook.png" />
+          </a>
+          <a href="https://www.youtube.com/@PhongkhamMatNgoiSao">
+            <img src="@/assets/youtube.png" />
+          </a>
+          <a href="https://zalo.me/1118479193975234403">
+            <img src="@/assets/zalo.png" />
+          </a>
         </div>
+      </div>
+      <div class="footer-right">
+        <p style="font-size: 22px; color: #54595f; font-weight: bold">Thông Tin Liên Hệ</p>
+        <p style="font-weight: bold; color: #61ce70">_____</p>
+        <br />
+        <div class="diachi" style="display: flex">
+          <img src="@/assets/dia_chi.png" style="margin-right: 20px" />
+          <p>Số nhà 22 liền kề 6A C17 bộ công an, làng Việt Kiều Châu Âu, Mộ Lao, Hà Đông, Hà Nội</p>
+        </div>
+        <br />
+        <div class="phone" style="display: flex">
+          <img src="@/assets/phone.png" style="margin-right: 20px" />
+          <p>098 7654 321</p>
+        </div>
+        <br />
+        <div class="www" style="display: flex">
+          <img src="@/assets/www.png" style="margin-right: 20px" />
+          <p>http://localhost:8081/</p>
+        </div>
+        <br />
+        <div class="time" style="display: flex">
+          <img src="@/assets/time.png" style="margin-right: 20px" />
+          <p>Time: 8.00 - 19.00h hàng ngày (Kể cả thứ 7 và Chủ nhật)</p>
+        </div>
+      </div>
     </div>
-</template>
-<script>
-import HeaderMenu from './HeaderMenu.vue';
-export default {
-    components:{
-        HeaderMenu,
-    }
-};
-</script>
+  </template>
+  
+  <script>
+  import HeaderMenu from './HeaderMenu.vue';
+  import axios from 'axios';
+  
+  export default {
+    components: {
+      HeaderMenu,
+    },
+    data() {
+      return {
+        employees: [],
+        customerName: '',
+        customerPhone: '',
+        customerEmail: '',
+        bookingTime: '',
+        // appointmentTime: '',
+        employeeName: '',
+        services: [],
+      };
+    },
+    created() {
+      this.fetchEmployees();
+      this.fetchServices();
+    },
+    methods: {
+      async fetchEmployees() {
+        try {
+          const response = await axios.get('http://127.0.0.1:8000/api/employees');
+          this.employees = response.data;
+        } catch (error) {
+          console.error('Error fetching employees:', error);
+        }
+      },
+      async submitBooking() {
+        try {
+           axios.post('http://127.0.0.1:8000/api/submitorder', {
+            customerName: this.customerName,
+            customerPhone: this.customerPhone,
+            customerEmail: this.customerEmail,
+            bookingTime: this.bookingTime,
+            employeeName: this.employeeName,
+            serviceName: this.serviceName,
+          });
+          alert('Đã đặt lịch thành công!');
+        this.customerName = '';
+        this.customerEmail = '';
+        this.customerPhone = '';
+        this.employeeName = '';
+        this.bookingTime='';
+        this.serviceName='';
+        } catch (error) {
+          console.error('Error submitting booking:', error);
+        }
+      },
+      async fetchServices() {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/getservices');
+        this.services = response.data;
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      }
+    },
+    },
+  };
+  </script>
+  
 <style>
 .image2 {
     position: relative;

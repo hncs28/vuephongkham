@@ -9,26 +9,39 @@
     <div class="register">
         <div class="register-container">
             <h2 style="color: #54595f;">Trang Đăng Ký</h2>
-            <form>
+            <form @submit.prevent="submitRegister">
                 <div class="form-register-group">
-                    <label for="fullname">Họ tên</label>
-                    <input type="text" id="fullname" placeholder="Họ tên" required>
+                    <label for="customerName">Họ tên</label>
+                    <input type="text" id="customerName" v-model="customerName" placeholder="Họ tên" required>
                 </div>
                 <div class="form-register-group">
-                    <label for="username">Tên đăng nhập</label>
-                    <input type="text" id="username" placeholder="Tên đăng nhập" required>
+                    <label for="dob">Ngay thang nam sinh</label>
+                    <input type="date" id="dob" v-model="dob" placeholder="Ngay thang nam sinh" required>
                 </div>
                 <div class="form-register-group">
-                    <label for="sdt/email">SĐT/Email</label>
-                    <input type="text" id="sdt/email" placeholder="SĐT/Email" required>
+                    <label for="customerPhone">SĐT</label>
+                    <input type="text" id="customerPhone" v-model="customerPhone" placeholder="SĐT" required>
+                </div>
+                
+                <div class="form-register-group">
+                    <label for="customerEmail">Email</label>
+                    <input type="text" id="customerEmail" v-model="customerEmail" placeholder="Email" required>
                 </div>
                 <div class="form-register-group">
-                    <label for="password">Mật khẩu</label>
-                    <input type="password" id="password" placeholder="Mật khẩu" required>
+                    <label for="customerUsername">Tên đăng nhập</label>
+                    <input type="text" id="customerUsername" v-model="customerUsername" placeholder="Tên đăng nhập" required>
+                </div>
+                <div class="form-register-group">
+                    <label for="customerPassword">Mật khẩu</label>
+                    <input type="password" id="customerPassword" v-model="customerPassword" placeholder="Mật khẩu" required>
                 </div>
                 <div class="form-register-group">
                     <label for="confirm-password">Nhập lại mật khẩu</label>
                     <input type="password" id="confirm-password" placeholder="Nhập lại mật khẩu" required>
+                </div>
+                <div class="form-register-group">
+                    <label for="customerAddress">Dia chi</label>
+                    <input type="text" id="customerAddress" v-model="customerAddress" placeholder="dia chi" required>
                 </div>
                 <button type="submit">Đăng Ký</button>
                 <p>Đã có tài khoản? <router-link to="/login" style="font-weight: bold; color: #61ce70;">Đăng
@@ -89,12 +102,47 @@
 </template>
 <script>
 import HeaderMenu from './HeaderMenu.vue';
+import axios from 'axios';
 
 export default {
     components:{
         HeaderMenu,
-    }
-};
+    },
+    data() {
+        return{
+            customerName:'',
+            customerAddress:'',
+            dob:'',
+            customerPhone:'',
+            customerEmail:'',
+            customerPassword:'',
+            customerUsername:'',
+        }
+    },
+    methods: {
+        async submitRegister(){
+            try {
+           axios.post('http://127.0.0.1:8000/api/register', {
+            customerName: this.customerName,
+            customerPhone: this.customerPhone,
+            customerEmail: this.customerEmail,
+            customerAddress: this.customerAddress,
+            dob: this.dob,
+            customerUsername: this.customerUsername,
+            customerPassword: this.customerPassword,
+
+            
+          });
+          alert('Đã đăng ký thành công!');
+          window.location.reload();
+       
+        } catch (error) {
+          console.error('Error submitting booking:', error);
+        }
+      },
+        }
+    };
+
 </script>
 <style>
 .image2 {

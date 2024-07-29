@@ -2,22 +2,22 @@
     <div class="menu" style="margin-top: 30px">
         <HeaderMenu/>
     </div>
-    <div class="image2">
+    <div class="image2" >
         <img src="@/assets/image.jpg">
-        <div class="text">Phẫu thuật ...</div>
+        <div class="text" v-if="service">{{ service.serviceName }}</div>
     </div>
 
     <div class="info-container">
-        <div class="info-image">
-            <img src="@/assets/doctor.jpg">
+        <div class="info-image" v-if="service">
+            <img :src=service.serviceImage>
         </div>
-        <div class="info-content">
-            <h2>Phẫu thuật ...</h2>
-            <p style="font-weight: bold;">100.000đ</p>
+        <div class="info-content" v-if="service">
+            <h2>{{ service.serviceName }}</h2>
+            <p style="font-weight: bold;">{{ service.price }}</p>
             <p style="color:gray; padding-bottom: 20px;">________________________________________</p>
-            <h3 style="font-size: 20px; margin-bottom: 10px;">Thông tin dịch vụ</h3>
-            <h3>Thời gian thực hiện:  <p style="color: #54595f; font-weight: normal;font-size: 15px; margin-left: 10px;">............</p></h3>
-            <h4 style="font-style: italic; color: #54595f; font-weight: normal;">Phù hợp cho mọi lứa tuổi, thời gian thực hiện nhanh khả năng phục hồi mắt cao</h4>
+            <h3 style="font-size: 20px; margin-bottom: 10px;">Thông tin dịch vụ:</h3>
+            <h3>Thời gian thực hiện:  <p style="color: #54595f; font-weight: normal;font-size: 15px; margin-left: 10px;">{{ service.Time }} phut</p></h3>
+            <h4 style="font-style: italic; color: #54595f; font-weight: normal;">{{ service.detail }}</h4>
         </div>
     </div>
 
@@ -64,11 +64,37 @@
 </template>
 <script>
 import HeaderMenu from './HeaderMenu.vue';
+import axios from 'axios';
 export default {
-    components:{
-        HeaderMenu,
+  name:'InfoService',
+  components: {
+    HeaderMenu
+  },
+  props: {
+    serviceID: {
+      type: [String, Number],
+      required: true
     }
-}
+  },
+  data() {
+    return {
+      service: null
+    };
+  },
+  created() {
+    this.getServiceData(this.serviceID);
+  },
+  methods: {
+    async getServiceData(serviceID) {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/getservices/${serviceID}`);
+        this.service = response.data[0];
+      } catch (error) {
+        console.error('Error fetching employee data:', error);
+      }
+    }
+  }
+};
 </script>
 
 <style>

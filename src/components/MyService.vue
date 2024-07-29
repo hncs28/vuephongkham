@@ -8,37 +8,13 @@
     </div>
 
 
-    <div class="service-list">
-        <div class="service-item">
-            <img src="@/assets/doctor.jpg">
-            <p>100.000đ</p>
-            <router-link to="/infoservice"><h3>Phẫu thuật ...</h3></router-link>
+    <div class="service-list" >
+        <div class="service-item" v-for="service in services" :key="service.serviceID">
+            <img :src=service.serviceImage style="height: 300px; width: 250px;" >
+            <p>{{ service.price }}</p>
+            <router-link :to="getServiceLink(service.serviceID)"><h3>{{ service.serviceName }}</h3></router-link>
         </div>
-        <div class="service-item">
-            <img src="@/assets/doctor.jpg">
-            <p>500.000đ</p>
-            <h3>Đo độ cận</h3>
-        </div>
-        <div class="service-item">
-            <img src="@/assets/doctor.jpg">
-            <p>1.000.000đ</p>
-            <h3>Name</h3>
-        </div>
-        <div class="service-item">
-            <img src="@/assets/doctor.jpg">
-            <p>price</p>
-            <h3>Name</h3>
-        </div>
-        <div class="service-item">
-            <img src="@/assets/doctor.jpg">
-            <p>price</p>
-            <h3>Name</h3>
-        </div>
-        <div class="service-item">
-            <img src="@/assets/doctor.jpg">
-            <p>price</p>
-            <h3>Name</h3>
-        </div>
+        
     </div>
 
 
@@ -84,13 +60,38 @@
     </div>
 </template>
 <script>
+import axios from 'axios';
 import HeaderMenu from './HeaderMenu.vue';
 
 export default {
-    components:{
-        HeaderMenu
+    name: 'MyService',
+    components: {
+        HeaderMenu,
+
+    },
+  data() {
+    return {
+      services: []
+    };
+  },
+  created() {
+    this.fetchServices();
+  },
+  methods: {
+    async fetchServices() {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/getservices');
+        this.services = response.data;
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      }
+    },
+    getServiceLink(serviceID) {
+        console.log(serviceID)
+      return `/infoservice/${serviceID}`;
     }
-}
+  }
+};
 </script>
 <style>
 .image2 {

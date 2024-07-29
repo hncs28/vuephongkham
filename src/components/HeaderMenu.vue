@@ -7,7 +7,8 @@
       <li><router-link to="/" style="color: #85cb6c;">TRANG CHỦ</router-link></li>
       <li><router-link to="/doctorteam" style="color: #54595f;">ĐỘI NGŨ Y BÁC SĨ</router-link></li>
       <li><router-link to="/myservice" style="color: #54595f;">DỊCH VỤ</router-link></li>
-      <li><router-link to="/login" style="color: #54595f;">ĐĂNG NHẬP</router-link></li>
+      <li v-if="!loggedIn"><router-link to="/login" style="color: #54595f;">ĐĂNG NHẬP</router-link></li>
+      <li v-else style="color: #54595f;">Hello, {{ loggedInUsername }}</li>
     </ul>
     <button style="width: 120px; height: 40px"><router-link to="/booking">
         <p>ĐẶT LỊCH</p>
@@ -17,7 +18,16 @@
 
 <script>
 export default {
-
+  props: {
+    loggedIn: {
+      type: Boolean,
+      default: false
+    },
+    loggedInUsername: {
+      type: String,
+      default: ''
+    }
+  }
 }
 </script>
 

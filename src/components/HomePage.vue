@@ -1,6 +1,6 @@
 <template>
     <div class="menu" style="margin-top: 30px">
-        <HeaderMenu/>
+        <HeaderMenu :loggedIn="loggedIn" :customerUsername="loggedInUsername"/>
     </div>
     <div class="slider-box">
         <Splide :options="options">
@@ -42,22 +42,18 @@
             <p style="padding-bottom: 15px;font-weight: bold;">GÓC CẢM NHẬN</p>
         </div>
         <div class="input-CN">
-            <input type="text" placeholder="Tên"><br><br>
-            <input type="text" placeholder="Cảm nhận"><br><br>
+            <form @submit.prevent="submitForm">
+            <input type="text" v-model="Name" placeholder="Tên"><br><br>
+            <input type="text" v-model="Comment" placeholder="Cảm nhận"><br><br>
             <button style="width: 170px; height: 40px"><a href="">
                     <p style="color: #61ce70; font-weight: bold; font-size: 16px;">GỬI CẢM NHẬN</p>
                 </a></button>
+            </form>
         </div><br>
         <div class="output">
-            <div class="out-left">
-                <p>Long established fact that a reader will be distracted by the readable content of a page when looking
-                    at it's layout. The point of using Lorem Ipsum</p><br>
-                <p style="text-align: right; color: #61ce70; padding-right: 50px;">P.K.Hoài Nam</p>
-            </div>
-            <div class="out-right">
-                <p>Long established fact that a reader will be distracted by the readable content of a page when looking
-                    at it's layout. The point of using Lorem Ipsum</p><br>
-                <p style="text-align: right; color: #61ce70; padding-right: 50px;">N.Trường Xuân</p>
+            <div class="out-left" v-for="comment in comments" :key="comment.commentID">
+                <p >{{comment.Comment}}</p><br>
+                <p style="color: #61ce70" >{{ comment.Name }}</p>
             </div>
         </div>
     </div>
@@ -109,6 +105,7 @@
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
 import { defineComponent } from 'vue';
 import HeaderMenu from './HeaderMenu.vue';
+import axios from 'axios';
 
 export default defineComponent({
     components: {
@@ -125,6 +122,39 @@ export default defineComponent({
 
         return { options };
     },
+    data() {
+    return {
+      comments: []
+    };
+  },
+  created() {
+    this.fetchComment();
+  },
+  methods: {
+    async fetchComment() {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/getcomment');
+        this.comments = response.data;
+      } catch (error) {
+        console.error('Error fetching comment:', error);
+      }
+    },
+    async submitForm() {
+      try {
+        await axios.post('http://127.0.0.1:8000/api/storecomment', {
+          Name: this.Name,
+          Comment: this.Comment
+        });
+        alert('Đã bình luận thành công!');
+        this.name = '';
+        this.review = '';
+        window.location.reload();
+      } catch (error) {
+        console.error(error);
+        alert('Bình luận lỗi');
+      }
+    },
+},
 });
 </script>
 

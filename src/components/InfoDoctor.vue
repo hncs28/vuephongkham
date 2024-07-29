@@ -2,22 +2,22 @@
     <div class="menu" style="margin-top: 30px">
         <HeaderMenu/>
     </div>
-    <div class="image2">
+    <div class="image2" v-if="employee">
         <img src="@/assets/image.jpg">
-        <div class="text">Phạm Khắc Hoài Nam</div>
+        <div class="text">{{ employee.employeeName }}</div>
     </div>
 
     <div class="info-container">
-        <div class="info-image">
-            <img src="@/assets/doctor.jpg">
+        <div class="info-image" v-if="employee">
+            <img :src=employee.employeeImage alt="Employee Image" style="height: 300px; width: 250px;" >
         </div>
-        <div class="info-content">
-            <h2>Phạm Khắc Hoài Nam</h2>
-            <p style="font-weight: bold;">Bác sĩ</p>
+        <div class="info-content" v-if="employee" >
+            <h2>{{ employee.employeeName }}</h2>
+            <p style="font-weight: bold;">{{ employee.employeeRole }}</p>
             <p style="color:gray; padding-bottom: 30px;">________________________________________</p>
-            <h3>PHONE:  <p style="color: #54595f; font-weight: normal;font-size: 15px; margin-left: 10px;">0123456789</p></h3>
-            <h3>EMAIL:  <p style="color: #54595f; font-weight: normal;font-size: 15px; margin-left: 10px;">doctorNam@gmail.com</p></h3>
-            <h4 style="font-style: italic; color: #54595f; font-weight: normal;">Kinh nghiệm làm việc: 10 năm đi làm chưa tiêm ai, 8 năm đi chữa nhưng chưa ai khỏi</h4>
+            <h3>PHONE:  <p style="color: #54595f; font-weight: normal;font-size: 15px; margin-left: 10px;">{{ employee.employeePhone }}</p></h3>
+            <h3>EMAIL:  <p style="color: #54595f; font-weight: normal;font-size: 15px; margin-left: 10px;">{{ employee.employeeEmail }}</p></h3>
+            <h4 style="font-style: italic; color: #54595f; font-weight: normal;">Kinh nghiệm làm việc: {{ employee.employeeExper }}</h4>
         </div>
     </div>
 
@@ -64,11 +64,36 @@
 </template>
 <script>
 import HeaderMenu from './HeaderMenu.vue';
+import axios from 'axios';
 export default {
-    components:{
-        HeaderMenu,
+  components: {
+    HeaderMenu
+  },
+  props: {
+    employeeID: {
+      type: [String, Number],
+      required: true
     }
-}
+  },
+  data() {
+    return {
+      employee: null
+    };
+  },
+  created() {
+    this.getEmployeeData(this.employeeID);
+  },
+  methods: {
+    async getEmployeeData(employeeID) {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/employees/${employeeID}`);
+        this.employee = response.data[0];
+      } catch (error) {
+        console.error('Error fetching employee data:', error);
+      }
+    }
+  }
+};
 </script>
 
 <style>
